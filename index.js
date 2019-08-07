@@ -11,6 +11,10 @@ const server = express();
 //middleware IMPORTANT
 server.use(express.json());
 
+server.listen(5000, () =>
+  console.log('Server running on http://localhost:5000')
+);
+
 
 server.post('/api/users', (req, res) =>{
     const newHub = req.body;
@@ -19,9 +23,9 @@ server.post('/api/users', (req, res) =>{
         res.status(201).json(hub);
     })
     .catch(err =>{
-        res.status(500).json({
+        res.status(400).json({
             err: err,
-            message: 'failed to create dat hub'
+            message: { errorMessage: "Please provide name and bio for the user." }
         })
     })
 });
