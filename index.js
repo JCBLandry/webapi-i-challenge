@@ -24,8 +24,8 @@ server.post('/api/users', (req, res) =>{
       .json({ errorMessage: 'Please provide name and bio for the user.' });
   } else {
     db.insert(newUser)
-    .then(users => {
-        res.status(201).json(users);
+    .then(newUser => {
+        res.status(201).json(newUser);
     })
     .catch(err =>{
         res.status(400).json({
@@ -58,9 +58,9 @@ server.get('/api/users', (req, res) => {
     //what am I sending back? next line
     db.findById(id)
 
-      .then(users => {
-          if (users) {
-        res.status(200).json(users);
+      .then(user => {
+          if (user) {
+        res.status(200).json(user);
           } else {
               res.status(404).json({
                  message: "The user with the specified ID does not exist." 
@@ -95,33 +95,34 @@ server.get('/api/users', (req, res) => {
         })
     });
 
-    server.put('/api/users/:id', (req, res)=>{
+    server.put('/api/users/:id', (req, res) => {
         const { id } = req.params;
         const { name, bio } = req.body;
-    
-        db.update(id, req.body)
+      
         if (!name || !bio) {
-            res
-      .status(400)
-      .json({ errorMessage: 'Please provide name and bio for the user.' });
-  } else {
-        .then(updated =>{
-            if (updated) {
-                res.json(updated);
-            } else {
-                res.status(404).json({
-                    message: 'invalid hub id'
-                });
-            }
-        })
-        .catch(err =>{
-            res.status(500).json({
-                err: err,
-                message: 'failed to create dat hub'
+          res
+            .status(400)
+            .json({ errorMessage: 'Please provide name and bio for the user.' });
+        } else {
+          db.update(id, req.body)
+            .then(changeUser => {
+              if (changeUser) {
+                res.status(200).json(user);
+              } else {
+                res
+                  .status(404)
+                  .json({
+                    message: 'The user with the specified ID does not exist.',
+                  });
+              }
             })
-        });
-    });
-
+            .catch(() => {
+              res.status(500).json({
+                errorMessage: 'The user information could not be modified.',
+              });
+            });
+        }
+      });
 
 
 
