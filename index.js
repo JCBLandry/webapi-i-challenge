@@ -11,23 +11,29 @@ const server = express();
 //middleware IMPORTANT
 server.use(express.json());
 
-server.listen(5000, () =>
-  console.log('Server running on http://localhost:5000')
-);
+
 
 
 server.post('/api/users', (req, res) =>{
-    const newHub = req.body;
-    db.insert(newHub)
+    const newUser = req.body;
+    const { name, bio } = req.body;
+
+  if (!name || !bio) {
+    res
+      .status(400)
+      .json({ errorMessage: 'Please provide name and bio for the user.' });
+  } else {
+    db.insert(newUser)
     .then(hub => {
         res.status(201).json(hub);
     })
     .catch(err =>{
         res.status(400).json({
             err: err,
-            message: { errorMessage: "Please provide name and bio for the user." }
+            message: { errorMessage: "Could not add the user." }
         })
     })
+}
 });
 
 
@@ -47,3 +53,8 @@ server.get('/api/users', (req, res) =>{
     server.get('/now', (req, res) =>{
         res.send(new Date());
         }); 
+
+
+        server.listen(5000, () =>
+  console.log('Server running on http://localhost:5000')
+);
