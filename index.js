@@ -107,7 +107,7 @@ server.get('/api/users', (req, res) => {
           db.update(id, req.body)
             .then(changeUser => {
               if (changeUser) {
-                res.status(200).json(user);
+                res.status(200).json(changeUser);
               } else {
                 res
                   .status(404)
